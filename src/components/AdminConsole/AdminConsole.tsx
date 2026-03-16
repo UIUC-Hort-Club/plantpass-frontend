@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography, Paper, Button } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import SalesAnalytics from "./SalesAnalytics";
 import ResetPassword from "./ResetPassword";
@@ -31,6 +31,17 @@ export default function AdminConsole({ tabIndex, requiresPasswordChange, onPassw
             elevated privileges!
           </Typography>
         )}
+
+        <Button
+          variant="outlined"
+          color="primary"
+          component="a"
+          href="/PlantPass_Order_Slips.pdf"
+          download
+          sx={{ mt: 1, mb: 2 }}
+        >
+          Download Order Slips PDF
+        </Button>
 
         <Divider sx={{ my: 2 }} />
 
