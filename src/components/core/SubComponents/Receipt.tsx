@@ -116,32 +116,41 @@ function Receipt({ totals, transactionId, discounts = [], voucher = 0, transacti
               </TableRow>
             </TableHead>
             <TableBody>
-              {displayDiscounts.map((discount, index) => (
-                <TableRow key={index}>
-                  <TableCell 
-                    sx={{ 
-                      color: discount.amount_off > 0 ? 'black' : 'gray',
-                      fontStyle: discount.amount_off > 0 ? 'normal' : 'italic'
-                    }}
-                  >
-                    {discount.name}
-                  </TableCell>
-                  <TableCell 
-                    sx={{ 
-                      color: discount.amount_off > 0 ? 'black' : 'gray',
-                      fontStyle: discount.amount_off > 0 ? 'normal' : 'italic'
-                    }}
-                  >
-                    -${Number(discount.amount_off || 0).toFixed(2)}
-                  </TableCell>
-                </TableRow>
-              ))}
-
-              {displayVoucher > 0 && (
+              {displayDiscounts.length === 0 && displayVoucher === 0 ? (
                 <TableRow>
-                  <TableCell>Club Voucher</TableCell>
-                  <TableCell>-${Number(displayVoucher).toFixed(2)}</TableCell>
+                  <TableCell sx={{ color: "gray", fontStyle: "italic" }}>n/a</TableCell>
+                  <TableCell sx={{ color: "gray", fontStyle: "italic" }}>n/a</TableCell>
                 </TableRow>
+              ) : (
+                <>
+                  {displayDiscounts.map((discount, index) => (
+                    <TableRow key={index}>
+                      <TableCell 
+                        sx={{ 
+                          color: discount.amount_off > 0 ? 'black' : 'gray',
+                          fontStyle: discount.amount_off > 0 ? 'normal' : 'italic'
+                        }}
+                      >
+                        {discount.name}
+                      </TableCell>
+                      <TableCell 
+                        sx={{ 
+                          color: discount.amount_off > 0 ? 'black' : 'gray',
+                          fontStyle: discount.amount_off > 0 ? 'normal' : 'italic'
+                        }}
+                      >
+                        -${Number(discount.amount_off || 0).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+
+                  {displayVoucher > 0 && (
+                    <TableRow>
+                      <TableCell>Club Voucher</TableCell>
+                      <TableCell>-${Number(displayVoucher).toFixed(2)}</TableCell>
+                    </TableRow>
+                  )}
+                </>
               )}
             </TableBody>
           </Table>

@@ -338,7 +338,7 @@ function OrderEntry() {
         onDiscountToggle={handleDiscountToggle}
       />
 
-      <Box sx={{ mt: 3 }}>
+      <Box sx={{ mt: 3, pb: { xs: 4, sm: 3 } }}>
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
@@ -388,9 +388,12 @@ function OrderEntry() {
       </Box>
 
       {currentTransactionID && receiptData && (
-        <div ref={receiptRef}>
-          <Receipt 
-            totals={receiptData.totals} 
+        <Box
+          ref={receiptRef}
+          sx={{ pb: { xs: 2, sm: 2.5 } }}
+        >
+          <Receipt
+            totals={receiptData.totals}
             transactionId={currentTransactionID}
             discounts={receiptData.discounts}
             voucher={receiptData.voucher}
@@ -399,7 +402,7 @@ function OrderEntry() {
           <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
             <Button
               variant="contained"
-              color="success"
+              color="primary"
               onClick={handleUpdateOrder}
               size="small"
             >
@@ -407,17 +410,15 @@ function OrderEntry() {
             </Button>
             <Button
               variant="contained"
-              color="success"
+              color="primary"
               onClick={handleNewOrder}
               size="small"
             >
               New Order
             </Button>
           </Stack>
-        </div>
+        </Box>
       )}
-
-      <div style={{ height: "1rem" }} />
 
       <ShowTransactionID
         open={transactionIDDialogOpen}

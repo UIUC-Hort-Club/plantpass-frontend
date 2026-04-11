@@ -382,36 +382,66 @@ function SalesAnalytics() {
       </Stack>
 
       <Grid container spacing={2} sx={{ mb: { xs: 2, sm: 3 } }}>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard 
-            title="Total Revenue" 
-            value={analytics.total_sales.toFixed(2)} 
-            prefix="$" 
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={2.4}
+          sx={{ order: { xs: 1, sm: 0 } }}
+        >
+          <MetricCard
+            title="Total Revenue"
+            value={analytics.total_sales.toFixed(2)}
+            prefix="$"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard 
-            title="Order Volume" 
-            value={analytics.total_orders} 
+        <Grid
+          item
+          xs={6}
+          sm={6}
+          md={2.4}
+          sx={{ order: { xs: 2, sm: 0 } }}
+        >
+          <MetricCard
+            title="Orders Completed"
+            value={analytics.total_orders}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard 
-            title="Average Order Value" 
-            value={analytics.average_order_value.toFixed(2)} 
-            prefix="$" 
+        <Grid
+          item
+          xs={6}
+          sm={6}
+          md={2.4}
+          sx={{ order: { xs: 4, sm: 0 } }}
+        >
+          <MetricCard
+            title="Avg. Order Value"
+            value={analytics.average_order_value.toFixed(2)}
+            prefix="$"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard 
-            title="Units Sold" 
-            value={analytics.total_units_sold} 
+        <Grid
+          item
+          xs={6}
+          sm={6}
+          md={2.4}
+          sx={{ order: { xs: 3, sm: 0 } }}
+        >
+          <MetricCard
+            title="Units Sold"
+            value={analytics.total_units_sold}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <MetricCard 
-            title="Avg Items/Order" 
-            value={analytics.average_items_per_order.toFixed(1)} 
+        <Grid
+          item
+          xs={6}
+          sm={6}
+          md={2.4}
+          sx={{ order: { xs: 4, sm: 0 } }}
+        >
+          <MetricCard
+            title="Avg. Items/Order"
+            value={analytics.average_items_per_order.toFixed(1)}
           />
         </Grid>
       </Grid>
