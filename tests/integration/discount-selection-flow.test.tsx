@@ -165,8 +165,8 @@ describe('Discount Selection Flow Integration', () => {
     expect(checkboxes[1]).not.toBeChecked();
     expect(checkboxes[2]).toBeChecked();
 
-    // Interact with other parts of the form to trigger re-renders
-    const quantityInputs = screen.getAllByRole('spinbutton');
+    // Interact with other parts of the form to trigger re-renders (quantity uses text + numeric inputMode)
+    const quantityInputs = screen.getAllByRole('textbox', { name: /quantity for /i });
     await user.clear(quantityInputs[0]);
     await user.type(quantityInputs[0], '5');
 
