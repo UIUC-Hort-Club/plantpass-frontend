@@ -1,9 +1,26 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  ReactNode,
+} from "react";
 import { getFeatureToggles } from "../api/feature_toggles_interface/getFeatureToggles";
 import type { FeatureToggles } from "../types";
+import LoadingSpinner from "../components/common/LoadingSpinner";
+
+/** Defaults match plantpass-backend FeatureTogglesHandler DEFAULT_FEATURES */
+const DEFAULT_FEATURES: FeatureToggles = {
+  collectEmailAddresses: true,
+  passwordProtectAdmin: true,
+  protectPlantPassAccess: false,
+};
 
 interface FeatureToggleContextValue {
   features: FeatureToggles;
+  /** False once the provider has finished the first fetch (the app gates rendering until then). */
   loading: boolean;
   refreshFeatureToggles: () => void;
 }
@@ -23,82 +40,77 @@ interface FeatureToggleProviderProps {
 }
 
 export function FeatureToggleProvider({ children }: FeatureToggleProviderProps): React.ReactElement {
-  // Initialize from localStorage first if available
-  const getInitialFeatures = (): FeatureToggles => {
-    try {
-      const stored = localStorage.getItem("featureToggles");
-      if (stored) {
-        return JSON.parse(stored) as FeatureToggles;
-      }
-    } catch {
-      // Silently fall back to defaults
-    }
-    // Default values
-    return {
-      collectEmailAddresses: true,
-      passwordProtectAdmin: true,
-      protectPlantPassAccess: false,
-    };
-  };
+  const [features, setFeatures] = useState<FeatureToggles>(DEFAULT_FEATURES);
+  const [ready, setReady] = useState(false);
+  const isFirstLoadRef = useRef(true);
 
-  const [features, setFeatures] = useState<FeatureToggles>(getInitialFeatures);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const loadFeatureToggles = async (): Promise<void> => {
+  const loadFeatureToggles = useCallback(async (): Promise<void> => {
+    const bootstrap = isFirstLoadRef.current;
     try {
       const response = await getFeatureToggles();
       setFeatures(response);
-      // Also cache in localStorage
       localStorage.setItem("featureToggles", JSON.stringify(response));
     } catch {
-      // Fall back to localStorage if API fails
-      const stored = localStorage.getItem("featureToggles");
-      if (stored) {
-        const parsed = JSON.parse(stored) as FeatureToggles;
-        setFeatures(parsed);
+      if (bootstrap) {
+        let fallback = DEFAULT_FEATURES;
+        try {
+          const stored = localStorage.getItem("featureToggles");
+          if (stored) {
+            fallback = JSON.parse(stored) as FeatureToggles;
+          }
+        } catch {
+          // keep DEFAULT_FEATURES
+        }
+        setFeatures(fallback);
       }
     } finally {
-      setLoading(false);
+      if (bootstrap) {
+        isFirstLoadRef.current = false;
+        setReady(true);
+      }
     }
-  };
+  }, []);
 
   useEffect(() => {
-    loadFeatureToggles();
-    
-    // Listen for storage changes (when toggles are saved in other tabs)
+    void loadFeatureToggles();
+
     const handleStorageChange = (): void => {
-      loadFeatureToggles();
-    };
-    
-    // Listen for custom events (when toggles are saved in same tab)
-    const handleFeatureTogglesUpdated = (): void => {
-      loadFeatureToggles();
+      void loadFeatureToggles();
     };
 
-    // Refresh when tab becomes visible (user returns to tab)
+    const handleFeatureTogglesUpdated = (): void => {
+      void loadFeatureToggles();
+    };
+
     const handleVisibilityChange = (): void => {
       if (!document.hidden) {
-        loadFeatureToggles();
+        void loadFeatureToggles();
       }
     };
-    
+
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("featureTogglesUpdated", handleFeatureTogglesUpdated);
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    
+
     return () => {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("featureTogglesUpdated", handleFeatureTogglesUpdated);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, [loadFeatureToggles]);
 
-  const refreshFeatureToggles = (): void => {
-    loadFeatureToggles();
-  };
+  const refreshFeatureToggles = useCallback((): void => {
+    void loadFeatureToggles();
+  }, [loadFeatureToggles]);
+
+  if (!ready) {
+    return <LoadingSpinner message="Loading..." />;
+  }
 
   return (
-    <FeatureToggleContext.Provider value={{ features, loading, refreshFeatureToggles }}>
+    <FeatureToggleContext.Provider
+      value={{ features, loading: false, refreshFeatureToggles }}
+    >
       {children}
     </FeatureToggleContext.Provider>
   );

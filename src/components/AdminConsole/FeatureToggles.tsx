@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import {
   Box,
   Typography,
@@ -12,45 +12,22 @@ import {
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { useNotification } from "../../contexts/NotificationContext";
-import LoadingSpinner from "../common/LoadingSpinner";
-import { getFeatureToggles } from "../../api/feature_toggles_interface/getFeatureToggles";
+import { useFeatureToggles } from "../../contexts/FeatureToggleContext";
 import { setFeatureToggles as saveFeatureToggles } from "../../api/feature_toggles_interface/setFeatureToggles";
+import type { FeatureToggles } from "../../types";
 
 export default function FeatureToggles() {
   const { showSuccess, showError } = useNotification();
-  const [loading, setLoading] = useState(true);
+  const { features: serverFeatures, refreshFeatureToggles } = useFeatureToggles();
   const [saving, setSaving] = useState(false);
-  
-  const [features, setFeatures] = useState({
-    collectEmailAddresses: true,
-    passwordProtectAdmin: true,
-    protectPlantPassAccess: false,
-  });
+  const [draft, setDraft] = useState<FeatureToggles>(() => ({ ...serverFeatures }));
 
   useEffect(() => {
-    loadFeatureToggles();
-  }, []);
+    setDraft({ ...serverFeatures });
+  }, [serverFeatures]);
 
-  const loadFeatureToggles = async () => {
-    try {
-      setLoading(true);
-      const response = await getFeatureToggles();
-      setFeatures(response);
-    } catch (error) {
-      console.error("Error loading feature toggles:", error);
-      showError("Failed to load feature toggles");
-      // Fall back to localStorage if API fails
-      const stored = localStorage.getItem("featureToggles");
-      if (stored) {
-        setFeatures(JSON.parse(stored));
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleToggleChange = (featureName) => (event) => {
-    setFeatures((prev) => ({
+  const handleToggleChange = (featureName: keyof FeatureToggles) => (event: ChangeEvent<HTMLInputElement>) => {
+    setDraft((prev) => ({
       ...prev,
       [featureName]: event.target.checked,
     }));
@@ -59,54 +36,42 @@ export default function FeatureToggles() {
   const handleSave = async () => {
     try {
       setSaving(true);
-      
-      try {
-        await saveFeatureToggles(features);
-      } catch {
-        // API save failed, using localStorage only
-      }
-      
-      // Always save to localStorage as backup
-      localStorage.setItem("featureToggles", JSON.stringify(features));
-      
-      // Dispatch event to notify context to refresh
-      window.dispatchEvent(new Event("featureTogglesUpdated"));
-      
-      showSuccess("Feature toggles saved successfully. Refresh the page to see changes.");
+      const saved = await saveFeatureToggles(draft);
+      localStorage.setItem("featureToggles", JSON.stringify(saved));
+      refreshFeatureToggles();
+      showSuccess("Feature toggles saved.");
     } catch (error) {
       console.error("Error saving feature toggles:", error);
-      showError("Failed to save feature toggles");
+      showError("Failed to save feature toggles. Check your connection and admin session.");
     } finally {
       setSaving(false);
     }
   };
-
-  if (loading) {
-    return <LoadingSpinner message="Loading feature toggles..." />;
-  }
 
   return (
     <Box>
       <Typography variant="h6" fontWeight={600} gutterBottom>
         Feature Toggles
       </Typography>
-      
+
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Enable or disable features for the PlantPass application.
+        Enable or disable features for the PlantPass application. Changes apply after a successful save
+        (password protection for the admin console is enforced the next time someone opens it without an
+        active admin session).
       </Typography>
 
       <Alert severity="info" sx={{ mb: 3 }}>
-        Please refresh the page after saving to see changes take effect.
+        Saving updates the server immediately. Other browser tabs pick up changes when they refresh or
+        refocus the window.
       </Alert>
 
       <Paper sx={{ p: 3 }}>
         <Stack spacing={3}>
-          {/* Email Collection Toggle */}
           <Box>
             <FormControlLabel
               control={
                 <Switch
-                  checked={features.collectEmailAddresses}
+                  checked={draft.collectEmailAddresses}
                   onChange={handleToggleChange("collectEmailAddresses")}
                   color="primary"
                 />
@@ -127,12 +92,11 @@ export default function FeatureToggles() {
 
           <Divider />
 
-          {/* Password Protection Toggle */}
           <Box>
             <FormControlLabel
               control={
                 <Switch
-                  checked={features.passwordProtectAdmin}
+                  checked={draft.passwordProtectAdmin}
                   onChange={handleToggleChange("passwordProtectAdmin")}
                   color="primary"
                 />
@@ -143,8 +107,8 @@ export default function FeatureToggles() {
                     Password Protect Admin Console
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    When enabled, requires password authentication to access the admin console.
-                    When disabled, clicking the Public icon button grants immediate access.
+                    When enabled, the next visit to the admin console (without an admin token) requires a
+                    password. When disabled, the app obtains access without a password for that session.
                   </Typography>
                 </Box>
               }
@@ -153,12 +117,11 @@ export default function FeatureToggles() {
 
           <Divider />
 
-          {/* PlantPass Access Protection Toggle */}
           <Box>
             <FormControlLabel
               control={
                 <Switch
-                  checked={features.protectPlantPassAccess}
+                  checked={draft.protectPlantPassAccess}
                   onChange={handleToggleChange("protectPlantPassAccess")}
                   color="primary"
                 />
