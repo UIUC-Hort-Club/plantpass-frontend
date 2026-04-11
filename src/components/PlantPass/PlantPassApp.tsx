@@ -43,30 +43,30 @@ export default function PlantPassApp() {
   /* =========================
      PlantPass access state
      ========================= */
-  const [hasPlantPassAccess, setHasPlantPassAccess] = useState(false);
   const [passphraseModalOpen, setPassphraseModalOpen] = useState(false);
 
   /* =========================
      Check PlantPass access on mount
      ========================= */
   useEffect(() => {
-    // Check if user has a valid token (admin or staff)
     const hasToken = localStorage.getItem("admin_token") || localStorage.getItem("staff_token");
-    
+
     if (hasToken) {
-      setHasPlantPassAccess(true);
       setPassphraseModalOpen(false);
-    } else if (features.protectPlantPassAccess && !hasPlantPassAccess) {
-      setPassphraseModalOpen(true);
+      return;
     }
-  }, [features.protectPlantPassAccess, hasPlantPassAccess]);
+
+    if (features.protectPlantPassAccess) {
+      setPassphraseModalOpen(true);
+    } else {
+      setPassphraseModalOpen(false);
+    }
+  }, [features.protectPlantPassAccess]);
 
   /* =========================
      PlantPass access handlers
      ========================= */
   const handlePassphraseSuccess = () => {
-    // Token is now stored by PlantPassAccessModal
-    setHasPlantPassAccess(true);
     setPassphraseModalOpen(false);
   };
 

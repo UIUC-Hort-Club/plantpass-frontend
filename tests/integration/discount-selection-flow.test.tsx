@@ -11,6 +11,13 @@ import * as discountsApi from '../../src/api/discounts_interface/getAllDiscounts
 // Mock API modules
 vi.mock('../../src/api/products_interface/getAllProducts');
 vi.mock('../../src/api/discounts_interface/getAllDiscounts');
+vi.mock('../../src/api/feature_toggles_interface/getFeatureToggles', () => ({
+  getFeatureToggles: vi.fn().mockResolvedValue({
+    collectEmailAddresses: true,
+    passwordProtectAdmin: true,
+    protectPlantPassAccess: false,
+  }),
+}));
 vi.mock('../../src/api/transaction_interface/createTransaction');
 vi.mock('../../src/api/transaction_interface/updateTransaction');
 

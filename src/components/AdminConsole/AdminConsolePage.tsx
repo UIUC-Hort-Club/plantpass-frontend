@@ -17,7 +17,7 @@ import { authenticateAdmin } from "../../api/authentication/passwordAuthenticati
 
 export default function AdminConsolePage() {
   const navigate = useNavigate();
-  const { features, loading: featureTogglesLoading } = useFeatureToggles();
+  const { features } = useFeatureToggles();
   
   const [adminTabIndex, setAdminTabIndex] = useState(0);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -28,10 +28,6 @@ export default function AdminConsolePage() {
   const [requiresPasswordChange, setRequiresPasswordChange] = useState(false);
 
   useEffect(() => {
-    if (featureTogglesLoading) {
-      return;
-    }
-
     const adminToken = localStorage.getItem("admin_token");
 
     if (adminToken) {
@@ -59,7 +55,7 @@ export default function AdminConsolePage() {
     }
 
     setAdminModalOpen(true);
-  }, [features.passwordProtectAdmin, featureTogglesLoading]);
+  }, [features.passwordProtectAdmin]);
 
   const handleMenuOpen = (event) => setMenuAnchorEl(event.currentTarget);
   const handleMenuClose = () => setMenuAnchorEl(null);
