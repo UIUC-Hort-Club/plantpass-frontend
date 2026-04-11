@@ -117,8 +117,14 @@ function OrderEntry() {
       return;
     }
 
-    // Use validation utility to ensure safe input
-    const numericValue = validateQuantity(value);
+    const digitsOnly = String(value).replace(/\D/g, "").slice(0, 3);
+    if (digitsOnly === "") {
+      setQuantities((prev) => ({ ...prev, [sku]: "" }));
+      setSubtotals((prev) => ({ ...prev, [sku]: "0.00" }));
+      return;
+    }
+
+    const numericValue = validateQuantity(digitsOnly);
 
     setQuantities((prev) => ({ ...prev, [sku]: numericValue }));
 
@@ -254,14 +260,16 @@ function OrderEntry() {
           mt: 3,
           p: 2.5,
           background: "linear-gradient(135deg, #F8F9FA 0%, #E8F5E9 100%)",
-          borderRadius: 3,
+          borderRadius: "6px",
           border: "1px solid #E9ECEF",
         }}
       >
         <Stack
-          direction="column"
-          alignItems="flex-end"
-          spacing={2}
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-start"
+          spacing={0}
+          sx={{ width: "100%" }}
         >
           <TextField
             label="Voucher"
@@ -288,13 +296,15 @@ function OrderEntry() {
                 </InputAdornment>
               ),
             }}
-            sx={{ 
-              width: 140,
-              '& .MuiOutlinedInput-root': {
-                background: '#FFFFFF',
-              }
+            sx={{
+              width: { xs: "48%", sm: 140 },
+              maxWidth: { xs: 180, sm: 140 },
+              flexShrink: 0,
+              "& .MuiOutlinedInput-root": {
+                background: "#FFFFFF",
+              },
             }}
-          />            
+          />
           <TextField
             label="Subtotal"
             size="small"
@@ -307,16 +317,18 @@ function OrderEntry() {
                 </InputAdornment>
               ),
             }}
-            sx={{ 
-              width: 140,
-              '& .MuiOutlinedInput-root': {
-                background: '#FFFFFF',
+            sx={{
+              width: { xs: "48%", sm: 140 },
+              maxWidth: { xs: 180, sm: 140 },
+              flexShrink: 0,
+              "& .MuiOutlinedInput-root": {
+                background: "#FFFFFF",
                 fontWeight: 700,
-                fontSize: '1.1rem',
-                color: '#2D6A4F',
-              }
+                fontSize: "1.1rem",
+                color: "#2D6A4F",
+              },
             }}
-          />            
+          />
         </Stack>
       </Box>
 

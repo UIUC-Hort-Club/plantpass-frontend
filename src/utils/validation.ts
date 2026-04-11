@@ -10,10 +10,13 @@ interface ValidationResult {
   errors: string[];
 }
 
+/** Max digits for line-item quantity inputs (mobile UI fits three digits). */
+export const MAX_LINE_ITEM_QUANTITY = 999;
+
 /**
  * Validate and sanitize quantity input
  * @param value - User input
- * @returns Valid quantity (0 or positive integer)
+ * @returns Valid quantity (0 or positive integer, capped at MAX_LINE_ITEM_QUANTITY)
  */
 export function validateQuantity(value: unknown): number {
   if (value === "" || value === null || value === undefined) {
@@ -26,8 +29,8 @@ export function validateQuantity(value: unknown): number {
     return 0;
   }
   
-  // Ensure non-negative integer
-  return Math.max(0, Math.floor(num));
+  // Ensure non-negative integer, max three digits for POS entry
+  return Math.min(MAX_LINE_ITEM_QUANTITY, Math.max(0, Math.floor(num)));
 }
 
 /**

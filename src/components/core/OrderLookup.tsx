@@ -28,6 +28,7 @@ import { deleteTransaction } from "../../api/transaction_interface/deleteTransac
 import { getAllPaymentMethods } from "../../api/payment_methods_interface/getAllPaymentMethods";
 import { useNotification } from "../../contexts/NotificationContext";
 import { formatOrderId } from "../../utils/orderIdFormatter";
+import { validateQuantity } from "../../utils/validation";
 import { useFeatureToggles } from "../../contexts/FeatureToggleContext";
 import { Transaction, PaymentMethod, Discount, ReceiptData, ProductQuantities, ProductSubtotals, Product } from "../../types";
 
@@ -136,11 +137,14 @@ function OrderLookup() {
       return;
     }
 
-    const numericValue = parseInt(value);
-    
-    if (isNaN(numericValue) || numericValue < 0) {
+    const digitsOnly = String(value).replace(/\D/g, "").slice(0, 3);
+    if (digitsOnly === "") {
+      setQuantities((prev) => ({ ...prev, [sku]: "" }));
+      setSubtotals((prev) => ({ ...prev, [sku]: "0.00" }));
       return;
     }
+
+    const numericValue = validateQuantity(digitsOnly);
 
     setQuantities((prev) => ({ ...prev, [sku]: numericValue }));
     const subtotal = (numericValue * item.Price).toFixed(2);
