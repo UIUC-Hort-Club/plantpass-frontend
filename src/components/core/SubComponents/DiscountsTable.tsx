@@ -75,7 +75,7 @@ export default function DiscountsTable({
           overflowY: "auto",
           overflowX: "auto",
           border: "1px solid #E9ECEF",
-          borderRadius: 3,
+          borderRadius: "6px",
           background: "#FFFFFF",
         }}
       >
