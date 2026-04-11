@@ -17,7 +17,7 @@ import { authenticateAdmin } from "../../api/authentication/passwordAuthenticati
 
 export default function AdminConsolePage() {
   const navigate = useNavigate();
-  const { features } = useFeatureToggles();
+  const { features, loading: featureTogglesLoading } = useFeatureToggles();
   
   const [adminTabIndex, setAdminTabIndex] = useState(0);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -28,22 +28,38 @@ export default function AdminConsolePage() {
   const [requiresPasswordChange, setRequiresPasswordChange] = useState(false);
 
   useEffect(() => {
-    // Check if user has a valid admin token
+    if (featureTogglesLoading) {
+      return;
+    }
+
     const adminToken = localStorage.getItem("admin_token");
-    
+
     if (adminToken) {
-      // Token exists, user is authenticated
       setIsAuthenticated(true);
       setAdminModalOpen(false);
-    } else if (!features.passwordProtectAdmin) {
-      // If password protection is disabled, still require token but show modal
-      // This ensures backend security is always enforced
-      setAdminModalOpen(true);
-    } else {
-      // Show password modal
-      setAdminModalOpen(true);
+      return;
     }
-  }, [features.passwordProtectAdmin]);
+
+    if (!features.passwordProtectAdmin) {
+      // Backend issues a token when passwordProtectAdmin is false in DynamoDB
+      authenticateAdmin("")
+        .then((result) => {
+          setIsAuthenticated(true);
+          setAdminModalOpen(false);
+          setAdminError("");
+          if (result.requires_password_change) {
+            setRequiresPasswordChange(true);
+            setAdminTabIndex(6);
+          }
+        })
+        .catch(() => {
+          setAdminModalOpen(true);
+        });
+      return;
+    }
+
+    setAdminModalOpen(true);
+  }, [features.passwordProtectAdmin, featureTogglesLoading]);
 
   const handleMenuOpen = (event) => setMenuAnchorEl(event.currentTarget);
   const handleMenuClose = () => setMenuAnchorEl(null);

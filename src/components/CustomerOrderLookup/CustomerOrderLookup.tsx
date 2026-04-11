@@ -8,6 +8,8 @@ import {
   Typography,
   AppBar,
   Toolbar,
+  useMediaQuery,
+  Alert,
 } from "@mui/material";
 import { readTransaction } from "../../api/transaction_interface/readTransaction";
 import Receipt from "../core/SubComponents/Receipt";
@@ -21,6 +23,7 @@ export default function CustomerOrderLookup() {
   const [transaction, setTransaction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState("");
+  const isDesktop = useMediaQuery("(min-width:900px)");
 
   useEffect(() => {
     if (orderIdFromUrl) {
@@ -157,9 +160,27 @@ export default function CustomerOrderLookup() {
 
         {/* Receipt */}
         {transaction && !loading && (
-          <Paper sx={{ p: { xs: 2, sm: 3 } }}>
-            <Receipt transaction={transaction} readOnly />
-          </Paper>
+          <>
+            {isDesktop && (
+              <Alert
+                severity="info"
+                sx={{
+                  mb: 2,
+                  borderRadius: 1.5,
+                  backgroundColor: "#E3F2FD",
+                  color: "#0D47A1",
+                  "@media print": {
+                    display: "none",
+                  },
+                }}
+              >
+                To print this page, press <strong>Ctrl + P</strong> on Windows or <strong>Cmd + P</strong> on Mac.
+              </Alert>
+            )}
+            <Paper sx={{ p: { xs: 2, sm: 3 } }}>
+              <Receipt transaction={transaction} readOnly />
+            </Paper>
+          </>
         )}
       </Box>
     </Box>
