@@ -44,6 +44,7 @@ const theme = createTheme({
       fontWeight: 600,
       textTransform: 'none',
       letterSpacing: '0.02em',
+      fontSize: '0.875rem',
     },
   },
   shape: {
@@ -62,25 +63,48 @@ const theme = createTheme({
   ],
   components: {
     MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
       styleOverrides: {
         root: {
-          borderRadius: 10,
-          padding: '10px 24px',
-          fontSize: '1rem',
+          borderRadius: 8,
+          padding: '6px 14px',
+          fontSize: '0.875rem',
+          lineHeight: 1.43,
           boxShadow: 'none',
           '&:hover': {
-            boxShadow: '0px 4px 12px rgba(45, 106, 79, 0.25)',
+            boxShadow: '0px 3px 10px rgba(45, 106, 79, 0.22)',
           },
         },
-        contained: {
+        sizeSmall: {
+          padding: '3px 8px',
+          fontSize: '0.8125rem',
+          lineHeight: 1.43,
+          borderRadius: 7,
+        },
+        sizeLarge: {
+          padding: '9px 20px',
+          fontSize: '0.9375rem',
+          lineHeight: 1.43,
+          borderRadius: 9,
+        },
+        containedPrimary: {
+          color: '#FFFFFF',
           background: 'linear-gradient(135deg, #2D6A4F 0%, #52B788 100%)',
           '&:hover': {
             background: 'linear-gradient(135deg, #1B4332 0%, #2D6A4F 100%)',
           },
         },
-        sizeLarge: {
-          padding: '14px 32px',
-          fontSize: '1.1rem',
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          padding: 8,
+        },
+        sizeSmall: {
+          padding: 4,
         },
       },
     },

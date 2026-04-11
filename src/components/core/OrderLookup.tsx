@@ -557,10 +557,25 @@ function OrderLookup() {
             <Box sx={{ mt: 2 }}>
               <Stack direction="row" spacing={2} justifyContent="space-between">
                 <Button
-                  variant="contained"
-                  color="error"
+                  variant="outlined"
                   size="small"
                   onClick={() => setDeleteDialogOpen(true)}
+                  sx={{
+                    fontWeight: 200,
+                    color: "error.dark",
+                    borderColor: "error.light",
+                    backgroundColor: "rgba(211, 47, 47, 0.08)",
+                    borderWidth: 2,
+                    py: 0.5,
+                    px: 2,
+                    minHeight: 32,
+                    "&:hover": {
+                      backgroundColor: "error.main",
+                      color: "white",
+                      borderColor: "error.main",
+                      borderWidth: 2,
+                    },
+                  }}
                 >
                   Delete Order
                 </Button>
@@ -606,10 +621,24 @@ function OrderLookup() {
           )}
 
           {!isOrderCompleted && (
-            <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 2, justifyContent: "center"}}>
-              <FormControl size="small" sx={{ minWidth: 180 }}>
-                <InputLabel>Payment Method *</InputLabel>
+            <Box
+              sx={{
+                mt: 2,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 2,
+                pb: { xs: 2, sm: 2.5 },
+              }}
+            >
+              <FormControl
+                size="small"
+                margin="none"
+                sx={{ width: "100%", maxWidth: 400 }}
+              >
+                <InputLabel id="order-lookup-payment-method-label">Payment Method *</InputLabel>
                 <Select
+                  labelId="order-lookup-payment-method-label"
                   value={paymentMethod}
                   label="Payment Method *"
                   onChange={(e) => setPaymentMethod(e.target.value)}
@@ -626,10 +655,24 @@ function OrderLookup() {
               </FormControl>
               <Button
                 variant="contained"
-                color="success"
-                size="small"
+                color="primary"
+                size="large"
                 onClick={handleCompleteOrder}
                 disabled={!paymentMethod}
+                sx={{
+                  width: "100%",
+                  maxWidth: 400,
+                  py: 1.5,
+                  fontSize: "1.1rem",
+                  fontWeight: 700,
+                  boxShadow: "0px 4px 16px rgba(45, 106, 79, 0.35)",
+                  "&:hover": {
+                    boxShadow: "0px 6px 22px rgba(45, 106, 79, 0.45)",
+                  },
+                  "&:disabled": {
+                    boxShadow: "none",
+                  },
+                }}
               >
                 Complete Order
               </Button>
@@ -645,8 +688,6 @@ function OrderLookup() {
           )}
         </>
       )}
-
-      <div style={{ height: "1rem" }} />
 
       <ConfirmationDialog
         open={deleteDialogOpen}
