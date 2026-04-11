@@ -278,7 +278,7 @@ export default function EditPaymentMethods() {
           disabled={isLocked}
           sx={{ py: 0.5, px: 2, minHeight: 32 }}
         >
-          Add Payment Method
+          Add
         </Button>
       </Stack>
 
