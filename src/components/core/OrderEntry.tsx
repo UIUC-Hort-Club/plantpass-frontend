@@ -24,6 +24,18 @@ import { useFeatureToggles } from "../../contexts/FeatureToggleContext";
 import { validateQuantity, validatePrice, validateEmail, validateTransactionItems } from "../../utils/validation";
 import { Product, Discount, ReceiptData, ProductQuantities, ProductSubtotals } from "../../types";
 
+const receiptActionButtonSx = {
+  minWidth: { xs: 148, sm: 172 },
+  py: 1.125,
+  px: 2.25,
+  fontSize: "0.9375rem",
+  fontWeight: 600,
+  boxShadow: "0px 2px 8px rgba(45, 106, 79, 0.22)",
+  "&:hover": {
+    boxShadow: "0px 3px 12px rgba(45, 106, 79, 0.3)",
+  },
+};
+
 function OrderEntry() {
   const { showSuccess, showWarning, showError } = useNotification();
   const { features } = useFeatureToggles();
@@ -399,12 +411,20 @@ function OrderEntry() {
             voucher={receiptData.voucher}
           />
 
-          <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
+          <Stack
+            direction="row"
+            flexWrap="wrap"
+            justifyContent="flex-end"
+            useFlexGap
+            spacing={1}
+            sx={{ mt: 2 }}
+          >
             <Button
               variant="contained"
               color="primary"
               onClick={handleUpdateOrder}
-              size="small"
+              size="medium"
+              sx={receiptActionButtonSx}
             >
               Update This Order
             </Button>
@@ -412,7 +432,8 @@ function OrderEntry() {
               variant="contained"
               color="primary"
               onClick={handleNewOrder}
-              size="small"
+              size="medium"
+              sx={receiptActionButtonSx}
             >
               New Order
             </Button>
