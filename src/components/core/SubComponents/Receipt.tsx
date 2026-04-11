@@ -15,6 +15,19 @@ import {
 } from "@mui/material";
 import { ReceiptProps } from "../../../types";
 
+const readOnlyItemsTableSx = {
+  tableLayout: "fixed" as const,
+  width: "100%",
+  minWidth: 0,
+};
+
+const readOnlyTableContainerSx = {
+  // Match ItemsTable: page scrolls; avoid inner horizontal scroll on narrow viewports
+  overflowX: { xs: "hidden", md: "visible" } as const,
+  overflowY: "visible",
+  maxHeight: "none",
+};
+
 function Receipt({ totals, transactionId, discounts = [], voucher = 0, transaction, readOnly = false }: ReceiptProps) {
   // If transaction object is provided, extract data from it
   let displayTransactionId = transactionId;
@@ -70,23 +83,107 @@ function Receipt({ totals, transactionId, discounts = [], voucher = 0, transacti
 
         {/* Items table for read-only mode */}
         {readOnly && displayItems.length > 0 && (
-          <TableContainer component={Paper} elevation={0} sx={{ mt: 2, mb: 2 }}>
-            <Table size="small">
+          <TableContainer
+            component={Paper}
+            elevation={0}
+            sx={{ mt: 2, mb: 2, ...readOnlyTableContainerSx }}
+          >
+            <Table size="small" sx={readOnlyItemsTableSx}>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Item</strong></TableCell>
-                  <TableCell align="right"><strong>Qty</strong></TableCell>
-                  <TableCell align="right"><strong>Price</strong></TableCell>
-                  <TableCell align="right"><strong>Total</strong></TableCell>
+                  <TableCell
+                    sx={{
+                      py: { xs: 1, sm: 1.25 },
+                      px: { xs: 0.75, sm: 2 },
+                      width: { xs: "40%", sm: "42%" },
+                      minWidth: 0,
+                    }}
+                  >
+                    <strong>Item</strong>
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      py: { xs: 1, sm: 1.25 },
+                      px: { xs: 0.35, sm: 2 },
+                      width: { xs: "12%", sm: "11%" },
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <strong>Qty</strong>
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      py: { xs: 1, sm: 1.25 },
+                      px: { xs: 0.35, sm: 2 },
+                      width: { xs: "22%", sm: "22%" },
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <strong>Price</strong>
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      py: { xs: 1, sm: 1.25 },
+                      px: { xs: 0.35, sm: 2 },
+                      width: { xs: "26%", sm: "25%" },
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <strong>Total</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {displayItems.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell>{item.item}</TableCell>
-                    <TableCell align="right">{item.quantity}</TableCell>
-                    <TableCell align="right">${Number(item.price_ea).toFixed(2)}</TableCell>
-                    <TableCell align="right">${(item.price_ea * item.quantity).toFixed(2)}</TableCell>
+                    <TableCell
+                      sx={{
+                        fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+                        px: { xs: 0.75, sm: 2 },
+                        py: { xs: 0.75, sm: 1 },
+                        minWidth: 0,
+                        overflowWrap: "anywhere",
+                        wordBreak: "break-word",
+                      }}
+                    >
+                      {item.item}
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{
+                        fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+                        px: { xs: 0.35, sm: 2 },
+                        py: { xs: 0.75, sm: 1 },
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {item.quantity}
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{
+                        fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+                        px: { xs: 0.35, sm: 2 },
+                        py: { xs: 0.75, sm: 1 },
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      ${Number(item.price_ea).toFixed(2)}
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{
+                        fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+                        px: { xs: 0.35, sm: 2 },
+                        py: { xs: 0.75, sm: 1 },
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      ${(item.price_ea * item.quantity).toFixed(2)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -103,14 +200,29 @@ function Receipt({ totals, transactionId, discounts = [], voucher = 0, transacti
           Subtotal: ${Number(displayTotals?.subtotal || 0).toFixed(2)}
         </Typography>
 
-        <TableContainer component={Paper} elevation={0}>
-          <Table size="small">
+        <TableContainer component={Paper} elevation={0} sx={readOnlyTableContainerSx}>
+          <Table size="small" sx={readOnlyItemsTableSx}>
             <TableHead>
               <TableRow>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    width: "62%",
+                    minWidth: 0,
+                    py: { xs: 1, sm: 1.25 },
+                    px: { xs: 0.75, sm: 2 },
+                  }}
+                >
                   <strong>Discount Name</strong>
                 </TableCell>
-                <TableCell>
+                <TableCell
+                  align="right"
+                  sx={{
+                    width: "38%",
+                    py: { xs: 1, sm: 1.25 },
+                    px: { xs: 0.5, sm: 2 },
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   <strong>Value</strong>
                 </TableCell>
               </TableRow>
@@ -118,25 +230,38 @@ function Receipt({ totals, transactionId, discounts = [], voucher = 0, transacti
             <TableBody>
               {displayDiscounts.length === 0 && displayVoucher === 0 ? (
                 <TableRow>
-                  <TableCell sx={{ color: "gray", fontStyle: "italic" }}>n/a</TableCell>
+                  <TableCell sx={{ color: "gray", fontStyle: "italic", minWidth: 0, overflowWrap: "anywhere" }}>
+                    n/a
+                  </TableCell>
                   <TableCell sx={{ color: "gray", fontStyle: "italic" }}>n/a</TableCell>
                 </TableRow>
               ) : (
                 <>
                   {displayDiscounts.map((discount, index) => (
                     <TableRow key={index}>
-                      <TableCell 
-                        sx={{ 
-                          color: discount.amount_off > 0 ? 'black' : 'gray',
-                          fontStyle: discount.amount_off > 0 ? 'normal' : 'italic'
+                      <TableCell
+                        sx={{
+                          color: discount.amount_off > 0 ? "black" : "gray",
+                          fontStyle: discount.amount_off > 0 ? "normal" : "italic",
+                          minWidth: 0,
+                          overflowWrap: "anywhere",
+                          wordBreak: "break-word",
+                          px: { xs: 0.75, sm: 2 },
+                          py: { xs: 0.75, sm: 1 },
+                          fontSize: { xs: "0.8125rem", sm: "0.875rem" },
                         }}
                       >
                         {discount.name}
                       </TableCell>
-                      <TableCell 
-                        sx={{ 
-                          color: discount.amount_off > 0 ? 'black' : 'gray',
-                          fontStyle: discount.amount_off > 0 ? 'normal' : 'italic'
+                      <TableCell
+                        align="right"
+                        sx={{
+                          color: discount.amount_off > 0 ? "black" : "gray",
+                          fontStyle: discount.amount_off > 0 ? "normal" : "italic",
+                          px: { xs: 0.5, sm: 2 },
+                          py: { xs: 0.75, sm: 1 },
+                          whiteSpace: "nowrap",
+                          fontSize: { xs: "0.8125rem", sm: "0.875rem" },
                         }}
                       >
                         -${Number(discount.amount_off || 0).toFixed(2)}
@@ -146,8 +271,26 @@ function Receipt({ totals, transactionId, discounts = [], voucher = 0, transacti
 
                   {displayVoucher > 0 && (
                     <TableRow>
-                      <TableCell>Club Voucher</TableCell>
-                      <TableCell>-${Number(displayVoucher).toFixed(2)}</TableCell>
+                      <TableCell
+                        sx={{
+                          px: { xs: 0.75, sm: 2 },
+                          py: { xs: 0.75, sm: 1 },
+                          fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+                        }}
+                      >
+                        Club Voucher
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        sx={{
+                          px: { xs: 0.5, sm: 2 },
+                          py: { xs: 0.75, sm: 1 },
+                          whiteSpace: "nowrap",
+                          fontSize: { xs: "0.8125rem", sm: "0.875rem" },
+                        }}
+                      >
+                        -${Number(displayVoucher).toFixed(2)}
+                      </TableCell>
                     </TableRow>
                   )}
                 </>
