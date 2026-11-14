@@ -1,5 +1,7 @@
-// Local development config - this file is overwritten in production
+// Local development config. Points at the local dev API, which you start with
+// `make dev` in plantpass-backend (fake data, nothing saved, staff passphrase "dev").
+// The deploy workflow overwrites this file with the production URLs.
 window.APP_CONFIG = {
-  API_ENDPOINT: 'https://y5kg6dk6p3.execute-api.us-east-1.amazonaws.com',
-  WEBSOCKET_URL: 'wss://tb2w6hd4vj.execute-api.us-east-1.amazonaws.com/production'
+  API_ENDPOINT: 'http://localhost:8787',
+  WEBSOCKET_URL: ''
 };
