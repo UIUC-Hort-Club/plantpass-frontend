@@ -91,9 +91,17 @@ Product docs, the roadmap and the agent skills live in the
 The app reads `window.APP_CONFIG` from `public/config.js` at load. The deploy
 workflow overwrites that file with the production URLs.
 
-**The committed `public/config.js` points at the production API.** Running
-`npm run dev` and submitting a form writes to the real sale data. There is no
-local or staging backend yet.
+The committed `public/config.js` points at a local API on
+`http://localhost:8787`. To run the whole app on your machine, with fake data
+and nothing saved:
+
+```bash
+make -C ../plantpass-backend dev    # the API: real handlers, in-memory database
+npm run dev                         # this app, at http://localhost:5173
+```
+
+Staff passphrase: `dev`. Admin login needs no password locally. Live dashboard
+updates and email are not available locally.
 
 ## Project Structure
 

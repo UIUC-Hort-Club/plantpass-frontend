@@ -23,9 +23,12 @@ inside it.
 
 - **The architect (Joseph Ku) decides what gets built.** No feature work
   without an approved spec in `../plantpass-backend/docs/specs/`.
-- **`npm run dev` talks to production.** `public/config.js` points at the live
-  API. Do not start the dev server and submit a form, and do not write tests
-  that make real requests.
+- **Try things locally, never in production.** The committed
+  `public/config.js` points at the local dev API: run `make dev` in
+  `../plantpass-backend`, then `npm run dev` here, and you have the whole app
+  on fake data (staff passphrase `dev`, admin login needs no password). Never
+  edit `config.js` to point at production, and do not write tests that make
+  real requests.
 - **A merge to `main` deploys to production.** Only the `ship` skill merges,
   through its merge gate.
 - **The volunteer's screen is sacred.** `src/components/core/OrderEntry.tsx`
