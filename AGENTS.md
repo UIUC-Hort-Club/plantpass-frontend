@@ -49,7 +49,7 @@ npx tsc --noEmit                    # types only
 
 | Change | Place |
 |---|---|
-| A new API call | one small file in `src/api/<resource>_interface/`, using `apiRequest` from `src/api/apiClient.ts`. Never call `fetch` directly. |
+| A new API call | one small file in `src/api/<resource>_interface/`, using `apiRequest` from `src/api/apiClient.ts`. Never call `fetch` directly. (Three older files do: `getFeatureToggles.ts` and the two in `src/api/authentication/`. Leave them unless a spec says otherwise.) |
 | An API shape | `src/types/index.ts`, mirrored by hand from the backend. Update `tests/types/contract-validation.test.ts` with it. |
 | Sale-day screens | `src/components/core/` (and `SubComponents/`) |
 | Organizer screens | `src/components/AdminConsole/` |
