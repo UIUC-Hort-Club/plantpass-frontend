@@ -76,14 +76,24 @@ npm run test:coverage
 npm run lint
 ```
 
+### Everything at once
+
+```bash
+npm run check    # lint, tests with coverage, typecheck, production build
+```
+
+Working with an AI agent, or new to the codebase: start with `AGENTS.md`.
+Product docs, the roadmap and the agent skills live in the
+[plantpass-backend](https://github.com/UIUC-Hort-Club/plantpass-backend) repo.
+
 ## Environment Configuration
 
-Create a `.env` file in the root directory:
+The app reads `window.APP_CONFIG` from `public/config.js` at load. The deploy
+workflow overwrites that file with the production URLs.
 
-```env
-VITE_API_ENDPOINT=https://your-api-endpoint.com
-VITE_WEBSOCKET_URL=wss://your-websocket-url.com
-```
+**The committed `public/config.js` points at the production API.** Running
+`npm run dev` and submitting a form writes to the real sale data. There is no
+local or staging backend yet.
 
 ## Project Structure
 
@@ -119,7 +129,7 @@ plantpass-frontend/
 
 ## Backend Repository
 
-This frontend connects to the PlantPass backend API. See the [plantpass-backend](https://github.com/your-org/plantpass-backend) repository for:
+This frontend connects to the PlantPass backend API. See the [plantpass-backend](https://github.com/UIUC-Hort-Club/plantpass-backend) repository for:
 - Lambda functions
 - Infrastructure (Terraform)
 - API documentation
