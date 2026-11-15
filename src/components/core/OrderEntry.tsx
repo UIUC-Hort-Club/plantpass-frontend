@@ -51,6 +51,10 @@ function OrderEntry() {
   const [customerEmail, setCustomerEmail] = useState("");
   const [currentTransactionID, setCurrentTransactionID] = useState("");
   const [transactionIDDialogOpen, setTransactionIDDialogOpen] = useState(false);
+  // A second tap while the first request is still on its way must not create a
+  // second order. The ref blocks it at once; the state greys out the button.
+  const submittingRef = useRef(false);
+  const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const computedSubtotal = Object.values(subtotals)
@@ -184,6 +188,10 @@ function OrderEntry() {
       email: features.collectEmailAddresses ? (customerEmail || "") : "",
     };
 
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setSubmitting(true);
+
     createTransaction(transaction)
       .then((response) => {
         setCurrentTransactionID(response.purchase_id);
@@ -201,6 +209,10 @@ function OrderEntry() {
       .catch((_error) => {
         const errorMessage = _error.message || "An error occurred while recording the transaction. Please try again.";
         showError(errorMessage);
+      })
+      .finally(() => {
+        submittingRef.current = false;
+        setSubmitting(false);
       });
   };
 
@@ -378,7 +390,7 @@ function OrderEntry() {
             color="primary"
             onClick={handleEnterOrder}
             size="large"
-            disabled={!!currentTransactionID}
+            disabled={!!currentTransactionID || submitting}
             sx={{ 
               minWidth: { xs: '100%', sm: 160 },
               py: 1.5,

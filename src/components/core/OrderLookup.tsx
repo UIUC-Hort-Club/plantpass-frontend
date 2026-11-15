@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Container,
   Button,
@@ -63,6 +63,9 @@ function OrderLookup() {
   const [loadingRecentOrders, setLoadingRecentOrders] = useState(true);
   
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  // A second tap on "Complete Order" must not send a second completion.
+  const completingRef = useRef(false);
+  const [completing, setCompleting] = useState(false);
 
   useEffect(() => {
     fetchRecentOrders();
@@ -338,6 +341,10 @@ function OrderLookup() {
       return;
     }
 
+    if (completingRef.current) return;
+    completingRef.current = true;
+    setCompleting(true);
+
     try {
       const paymentData = {
         payment: {
@@ -358,6 +365,9 @@ function OrderLookup() {
       
     } catch {
       setError("Failed to complete order. Please try again.");
+    } finally {
+      completingRef.current = false;
+      setCompleting(false);
     }
   };
 
@@ -658,7 +668,7 @@ function OrderLookup() {
                 color="primary"
                 size="large"
                 onClick={handleCompleteOrder}
-                disabled={!paymentMethod}
+                disabled={!paymentMethod || completing}
                 sx={{
                   width: "100%",
                   maxWidth: 400,

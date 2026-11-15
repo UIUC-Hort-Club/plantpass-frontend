@@ -248,11 +248,11 @@ export default function ProductTable() {
     }
 
     const invalidPrices = rows.filter(row => 
-      row.name && row.name.trim() !== '' && (isNaN(parseFloat(row.price)) || parseFloat(row.price) < 0)
+      row.name && row.name.trim() !== '' && (isNaN(parseFloat(row.price)) || parseFloat(row.price) <= 0)
     );
     
     if (invalidPrices.length > 0) {
-      showError("All products must have a valid price");
+      showError("Every product needs a price above $0.00");
       return;
     }
 
