@@ -1,6 +1,31 @@
 import { API_URL } from './config';
 import type { ApiRequestOptions } from '../types';
 
+/** Shown when a login route answers 429: the server limits how fast these can be tried. */
+export const TOO_MANY_TRIES = 'Too many tries. Wait a few seconds and try again.';
+/** Shown when no usable answer came back: offline, a server error, or a response the browser could not read. */
+export const NO_ANSWER = "Couldn't reach the server. Wait a few seconds and try again.";
+
+/**
+ * What to tell someone whose login attempt failed. Only a refusal from the
+ * server means the password was wrong; an error with no HTTP status means the
+ * request never got a readable answer.
+ */
+export function loginFailureMessage(error: unknown, wrong: string): string {
+  const status = (error as { status?: number }).status;
+  if (status === 429) return TOO_MANY_TRIES;
+  if (status === undefined || status >= 500) return NO_ANSWER;
+  return wrong;
+}
+
+type HttpError = Error & { status?: number };
+
+function httpError(message: string, status: number): HttpError {
+  const error = new Error(message) as HttpError;
+  error.status = status;
+  return error;
+}
+
 /**
  * Get the current authentication token from localStorage
  */
@@ -104,14 +129,14 @@ export async function apiRequest<T = unknown>(
     if (response.status === 401) {
       clearAuth();
       window.location.href = '/';
-      throw new Error('Session expired. Please log in again.');
+      throw httpError('Session expired. Please log in again.', 401);
     }
 
     // Handle 403 Forbidden
     if (response.status === 403) {
       const errorBody = await response.json().catch(() => ({})) as { error?: string; message?: string };
       const message = errorBody.error || errorBody.message || 'Access denied';
-      throw new Error(message);
+      throw httpError(message, 403);
     }
 
     // Handle other error responses
@@ -128,10 +153,10 @@ export async function apiRequest<T = unknown>(
       
       // For validation errors, include specific error details
       if (response.status === 400 && errorBody.errors) {
-        throw new Error(`${backendMessage}\n${errorBody.errors.join('\n')}`);
+        throw httpError(`${backendMessage}\n${errorBody.errors.join('\n')}`, 400);
       }
       
-      throw new Error(backendMessage || friendlyMessage);
+      throw httpError(backendMessage || friendlyMessage, response.status);
     }
 
     // Handle 204 No Content

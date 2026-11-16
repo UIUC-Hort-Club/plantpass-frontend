@@ -124,6 +124,8 @@ Manage the product catalog:
 5. Delete products using the trash icon
 6. Click "Save" to update the product list
 
+Every product needs a price above $0.00. The list will not save until each one has a price.
+
 The lock icon shows whether products are currently being edited by another administrator. When locked, you cannot make changes until the other person finishes.
 
 ### Edit Discounts
@@ -192,13 +194,13 @@ This passphrase is separate from the admin password and is used to restrict acce
 Change the admin password:
 
 1. Enter the current password
-2. Enter the new password
+2. Enter the new password (at least 12 characters)
 3. Confirm the new password
 4. Click "Update Password" to save
 
 Use the eye icon next to each password field to show or hide what you're typing.
 
-If you forget your password, click "Forgot Password?" and enter your email address to receive a password reset link.
+If you forget your password, click "Forgot Password?". A temporary password is sent to the club's email address. It works for 15 minutes, and after logging in with it you are asked to set a new password. You can ask for one once a minute.
 
 ## Customer Order Lookup
 

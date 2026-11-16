@@ -14,6 +14,7 @@ import ForgotPasswordDialog from "./ForgotPasswordDialog";
 import NavigationMenu from "../Navigation/NavigationMenu";
 import { useFeatureToggles } from "../../contexts/FeatureToggleContext";
 import { authenticateAdmin } from "../../api/authentication/passwordAuthentication";
+import { loginFailureMessage } from "../../api/apiClient";
 
 export default function AdminConsolePage() {
   const navigate = useNavigate();
@@ -100,7 +101,7 @@ export default function AdminConsolePage() {
         }
       })
       .catch((error) => {
-        setAdminError('Password incorrect');
+        setAdminError(loginFailureMessage(error, 'Password incorrect'));
         throw error;
       });
   };

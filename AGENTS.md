@@ -73,5 +73,7 @@ npx tsc --noEmit                    # types only
   `src/utils/authUtils.ts`.
 - If a volunteer or organizer does anything differently after your change,
   update `USAGE.md` in the same commit.
+- Branch names: this repo has an old branch called `fix`, so GitHub refuses any
+  `fix/...` name. Use `bugfix/<slug>` or `feat/<ID>-<slug>`.
 - A deliberate shortcut gets a comment: `// shortcut: <the limit>, <when to
   upgrade>`.
