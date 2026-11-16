@@ -252,7 +252,7 @@ export default function ProductTable() {
     );
     
     if (invalidPrices.length > 0) {
-      showError("Every product needs a price above $0.00");
+      showError(`Every product needs a price above $0.00 (check "${invalidPrices[0].name.trim()}")`);
       return;
     }
 

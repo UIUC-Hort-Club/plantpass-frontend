@@ -1,6 +1,9 @@
 import { API_URL } from './config';
 import type { ApiRequestOptions } from '../types';
 
+/** Shown when a login route answers 429: the server limits how fast these can be tried. */
+export const TOO_MANY_TRIES = 'Too many tries. Wait a few seconds and try again.';
+
 /**
  * Get the current authentication token from localStorage
  */
@@ -131,7 +134,9 @@ export async function apiRequest<T = unknown>(
         throw new Error(`${backendMessage}\n${errorBody.errors.join('\n')}`);
       }
       
-      throw new Error(backendMessage || friendlyMessage);
+      const error = new Error(backendMessage || friendlyMessage) as Error & { status?: number };
+      error.status = response.status;
+      throw error;
     }
 
     // Handle 204 No Content

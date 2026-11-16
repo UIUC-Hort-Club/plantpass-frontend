@@ -10,7 +10,7 @@ import {
   Alert,
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
-import { apiRequest } from "../../api/apiClient";
+import { apiRequest, TOO_MANY_TRIES } from "../../api/apiClient";
 import PasswordField from "../common/PasswordField";
 
 export default function PlantPassAccessModal({ open, onClose, onSuccess }) {
@@ -43,7 +43,8 @@ export default function PlantPassAccessModal({ open, onClose, onSuccess }) {
       onSuccess();
     } catch (err) {
       console.error("Error verifying passphrase:", err);
-      setError("Incorrect passphrase. Please try again.");
+      const rateLimited = (err as { status?: number }).status === 429;
+      setError(rateLimited ? TOO_MANY_TRIES : "Incorrect passphrase. Please try again.");
     } finally {
       setLoading(false);
     }

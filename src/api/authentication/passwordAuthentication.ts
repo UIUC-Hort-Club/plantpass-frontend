@@ -24,7 +24,9 @@ export async function authenticateAdmin(password: string): Promise<AuthResponse>
   });
 
   if (!response.ok) {
-    throw new Error("Authentication failed");
+    const error = new Error("Authentication failed") as Error & { status?: number };
+    error.status = response.status;
+    throw error;
   }
 
   const data = await response.json() as AuthResponse;
