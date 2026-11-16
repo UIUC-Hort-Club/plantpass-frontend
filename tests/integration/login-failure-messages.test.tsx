@@ -41,6 +41,12 @@ describe('Login failure messages', () => {
       return (await screen.findByRole('alert')).textContent;
     }
 
+    it('refused by the server: incorrect', async () => {
+      expect(await submitWith(async () => json(401, { message: 'Incorrect passphrase' }))).toBe(
+        'Incorrect passphrase. Please try again.'
+      );
+    });
+
     it('rate-limited: too many tries', async () => {
       expect(await submitWith(async () => json(429, { message: 'Too Many Requests' }))).toBe(TOO_MANY_TRIES);
     });
@@ -84,6 +90,14 @@ describe('Login failure messages', () => {
 
     it('a server error gets the same plain sentence', async () => {
       expect(await askWith(async () => json(500, { error: 'Internal server error' }))).toBe(failed);
+    });
+
+    it('a success whose body is not JSON is still a success', async () => {
+      vi.mocked(fetch).mockResolvedValue(new Response('ok', { status: 200 }));
+      const user = userEvent.setup();
+      render(<ForgotPasswordDialog open onClose={() => {}} onCancel={() => {}} />);
+      await user.click(screen.getByRole('button', { name: 'Send Reset Email' }));
+      expect(await screen.findByText(/temporary password has been sent/i)).toBeInTheDocument();
     });
   });
 });

@@ -684,7 +684,7 @@ function OrderLookup() {
                   },
                 }}
               >
-                Complete Order
+                {completing ? "Completing..." : "Complete Order"}
               </Button>
             </Box>
           )}
