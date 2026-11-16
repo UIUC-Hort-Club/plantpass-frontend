@@ -61,6 +61,8 @@ describe('Entering an order', () => {
 
     expect(createApi.createTransaction).toHaveBeenCalledTimes(1);
     expect(enter).toBeDisabled();
+    // the button says it is working, so a long wait does not look like a dead button
+    expect(enter).toHaveTextContent('Entering...');
     const sent = vi.mocked(createApi.createTransaction).mock.calls[0][0];
     expect(sent.items.find((i) => i.SKU === 'PLANT-001')).toMatchObject({ quantity: 2, price_ea: 25.99 });
   });
@@ -72,6 +74,7 @@ describe('Entering an order', () => {
     await user.click(enter);
 
     await waitFor(() => expect(enter).toBeEnabled());
+    expect(enter).toHaveTextContent('Enter Order');
     expect(quantity).toHaveValue('2');
     await user.click(enter);
     expect(createApi.createTransaction).toHaveBeenCalledTimes(2);

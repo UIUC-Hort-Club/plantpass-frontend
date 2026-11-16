@@ -406,7 +406,7 @@ function OrderEntry() {
               }
             }}
           >
-            Enter Order
+            {submitting ? "Entering..." : "Enter Order"}
           </Button>
         </Stack>          
       </Box>

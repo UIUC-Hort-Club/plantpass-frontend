@@ -73,6 +73,7 @@ describe('Completing an order', () => {
       email: '',
     });
     expect(complete).toBeDisabled();
+    expect(complete).toHaveTextContent('Completing...');
   });
 
   it('keeps the order on screen and lets the cashier try again when the request fails', async () => {
