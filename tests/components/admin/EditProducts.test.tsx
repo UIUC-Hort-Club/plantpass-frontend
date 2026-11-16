@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import ProductTable from '../../../src/components/AdminConsole/EditProducts';
@@ -37,8 +37,9 @@ describe('Product editor: a price of zero', () => {
   it('refuses to save a new product whose price was left at 0.00, and names it', async () => {
     const user = await open([{ SKU: 'MON001', item: 'Monstera', price_ea: 25.99, sort_order: 1 }]);
     await user.click(screen.getByRole('button', { name: 'Add Product' }));
-    // each row is three text boxes: SKU, name, price
-    await user.type(screen.getAllByRole('textbox')[4], 'Fern');
+    // the new row is the last one; its boxes are SKU, name, price
+    const newRow = screen.getAllByRole('row').at(-1)!;
+    await user.type(within(newRow).getAllByRole('textbox')[1], 'Fern');
     await user.tab();
 
     await user.click(screen.getByRole('button', { name: 'Save' }));
@@ -52,8 +53,7 @@ describe('Product editor: a price of zero', () => {
       { SKU: 'MON001', item: 'Monstera', price_ea: 25.99, sort_order: 1 },
       { SKU: 'FREE001', item: 'Freebie', price_ea: 0, sort_order: 2 },
     ]);
-    // each row is three text boxes: SKU, name, price
-    const monsteraPrice = screen.getAllByRole('textbox')[2];
+    const monsteraPrice = screen.getByDisplayValue('25.99');
     await user.clear(monsteraPrice);
     await user.type(monsteraPrice, '30');
     await user.tab();
@@ -62,7 +62,7 @@ describe('Product editor: a price of zero', () => {
     expect(await screen.findByText(/check "Freebie"/)).toBeInTheDocument();
     expect(replaceApi.replaceAllProducts).not.toHaveBeenCalled();
 
-    const freebiePrice = screen.getAllByRole('textbox')[5];
+    const freebiePrice = screen.getByDisplayValue('0.00');
     await user.clear(freebiePrice);
     await user.type(freebiePrice, '0.01');
     await user.tab();
